@@ -25,6 +25,7 @@ struct BookingItemView: View {
                         Image(systemName: "airplane.departure")
                     }
                 }
+                .bold()
                 .padding()
                 .shadow(radius: 30)
             }

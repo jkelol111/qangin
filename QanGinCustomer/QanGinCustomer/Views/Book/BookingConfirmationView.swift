@@ -122,10 +122,14 @@ struct BookingConfirmationView: View {
                 }
             }
             
-            Section("Price") {
+            Section {
                 LabeledContent("Subtotal", value: String(booking.subtotal()))
                 LabeledContent("Taxes (incl. airport fees)", value: "128.64")
-                LabeledContent("Total", value: String(booking.subtotal() + 128.64))
+                LabeledContent("Total", value: String(format: "%.2f", booking.subtotal() + 128.64))
+            } header: {
+                Text("Price")
+            } footer: {
+                Text("Prices are rounded to nearest cent.\nBookings subject to FlySmartAir's terms and conditions.")
             }
             
             Button(booking.isBooked ? "Cancel booking" : "Confirm selections") {
