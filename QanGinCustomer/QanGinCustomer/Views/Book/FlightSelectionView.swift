@@ -1,16 +1,16 @@
 import SwiftUI
 
 struct FlightSelectionView: View {
-    struct Flight: Identifiable {
-        let id = UUID()
-        let flyingOn: Date
-        let aircraft: String
+    enum Direction: String {
+        case forward = "Departing flight"
+        case backwards = "Returning flight"
     }
     
+    let direction: Direction
     @Bindable var booking: Booking
-    @Binding var path: [BookView.BookPaths]
+    @Binding var path: [BookView.Paths]
     
-    @State private var flights: [Flight] = []
+    @State private var flights: [Booking.Flight] = []
     
     var body: some View {
         ScrollView {
@@ -18,7 +18,7 @@ struct FlightSelectionView: View {
                 ForEach(flights) { flight in
                     HStack {
                         VStack(alignment: .leading) {
-                            Label(flight.aircraft, systemImage: "airplane")
+                            Label(flight.id, systemImage: "airplane")
                             HStack(alignment: .lastTextBaseline) {
                                 Text("in")
                                     .font(.subheadline)
@@ -35,22 +35,29 @@ struct FlightSelectionView: View {
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .onTapGesture {
-                        booking.flyingOn = flight.flyingOn
-                        booking.aircraft = flight.aircraft
-                        path.append(.passengers)
+                        switch direction {
+                        case .forward:
+                            booking.forwardFlight = flight
+                        case .backwards:
+                            booking.returnFlight = flight
+                        }
+                        if booking.isReturn && booking.returnFlight == nil {
+                            path.append(.flightSelection(.backwards))
+                        } else {
+                            path.append(.passengers)
+                        }
                     }
                 }
             }
             .padding([.leading, .trailing])
         }
-        .navigationTitle("Departing flight")
+        .navigationTitle(direction.rawValue)
         .onAppear {
             if flights.isEmpty {
                 for i in 1...3 {
                     flights.append(
-                        Flight(
-                            flyingOn: Date(timeInterval: 86400 * Double(i), since: booking.flyingOn),
-                            aircraft: "Airbus A320-200"
+                        .init(
+                            id: "FS\(100 + i)", flyingOn: Date(timeInterval: 86400 * Double(i), since: direction == .forward ? booking.flyingOn : booking.returningOn)
                         )
                     )
                 }
@@ -63,8 +70,9 @@ struct FlightSelectionView: View {
     MainActor.assumeIsolated {
         NavigationStack {
             FlightSelectionView(
+                direction: .forward,
                 booking: .preview(),
-                path: .constant([.flightSelection])
+                path: .constant([.flightSelection(.forward)])
             )
         }
         .modelContainer(.preview())

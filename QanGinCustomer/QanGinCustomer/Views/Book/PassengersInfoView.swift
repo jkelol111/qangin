@@ -36,24 +36,24 @@ struct PassengersInfoView: View {
             .sheet(isPresented: $isSeatSelectionPresented, onDismiss: {
                 if let seat = passenger.seat {
                     seats[seat.row][seat.position] = true
-                    if let previousSelectedSeat {
-                        if seat != previousSelectedSeat {
+                    if seat != previousSelectedSeat {
+                        if let previousSelectedSeat {
                             seats[previousSelectedSeat.row][previousSelectedSeat.position] = false
-                            self.previousSelectedSeat = seat
                         }
+                        previousSelectedSeat = seat
                     }
                 }
             }) {
                 SeatSelectionView(passenger: $passenger, seats: seats)
             }
             .sheet(isPresented: $isServicesSelectionPresented) {
-                
+                ServicesSelectionView(passenger: $passenger)
             }
         }
     }
     
     @Bindable var booking: Booking
-    @Binding var path: [BookView.BookPaths]
+    @Binding var path: [BookView.Paths]
     
     @State private var seats: [[String: Bool]] = Array(
         repeating: [

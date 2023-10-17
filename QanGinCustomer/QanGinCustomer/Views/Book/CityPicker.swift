@@ -8,41 +8,67 @@ struct CityPicker: View {
     
     @Environment(\.dismiss) private var dismiss
     let direction: Direction
-    @Binding var city: Destinations
-    
-    @ViewBuilder
-    private func pickerItem(_ destination: Destinations) -> some View {
-        HStack {
-            Text(destination.rawValue)
-                .font(.title.weight(.semibold))
-                .padding([.top, .bottom], 24)
-                .padding(.leading, 14)
-                .shadow(radius: 30)
-            Spacer()
-        }
-        .foregroundStyle(.white)
-        .background {
-            Image("Destinations/\(destination.rawValue)")
-                .resizable()
-                .scaledToFill()
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .onTapGesture {
-            city = destination
-            dismiss()
-        }
-    }
+    @Bindable var booking: Booking
     
     var body: some View {
         ScrollView {
             LazyVStack {
                 ForEach(Destinations.allCases, id: \.self) { destination in
-                    pickerItem(destination)
+                    HStack {
+                        Text(destination.rawValue)
+                            .font(.title.weight(.semibold))
+                            .padding([.top, .bottom], 24)
+                            .padding(.leading, 14)
+                            .shadow(radius: 30)
+                        Spacer()
+                    }
+                    .foregroundStyle(.white)
+                    .background {
+                        Image("Destinations/\(destination.rawValue)")
+                            .resizable()
+                            .scaledToFill()
+                    }
+                    .overlay {
+                        switch direction {
+                        case .from:
+                            if booking.to == destination {
+                                Color.black
+                                    .opacity(0.8)
+                            }
+                        case .to:
+                            if booking.from == destination {
+                                Color.black
+                                    .opacity(0.8)
+                            }
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .onTapGesture {
+                        switch direction {
+                        case .from:
+                            if booking.to == destination {
+                                print("from = to")
+                                return
+                            }
+                            booking.from = destination
+                        case .to:
+                            if booking.from == destination {
+                                print("to = from")
+                                return
+                            }
+                            booking.to = destination
+                        }
+                        dismiss()
+                    }
                 }
             }
             .padding([.leading, .trailing])
         }
         .navigationTitle(direction.rawValue)
+        .onDisappear {
+            print("from: \(booking.from.rawValue)")
+            print("to: \(booking.to.rawValue)")
+        }
     }
 }
 
@@ -50,7 +76,7 @@ struct CityPicker: View {
     NavigationStack {
         CityPicker(
             direction: .to,
-            city: .constant(.sydney)
+            booking: .preview()
         )
     }
 }

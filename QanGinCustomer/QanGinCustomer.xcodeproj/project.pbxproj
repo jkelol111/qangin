@@ -10,6 +10,7 @@
 		2E9A0CE52AAC804D0060DD8C /* FlightSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9A0CE42AAC804D0060DD8C /* FlightSelectionView.swift */; };
 		2E9A0CE72AAD97080060DD8C /* PassengersInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9A0CE62AAD97080060DD8C /* PassengersInfoView.swift */; };
 		2E9A0CE92AADE7140060DD8C /* ServicesSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9A0CE82AADE7140060DD8C /* ServicesSelectionView.swift */; };
+		2E9A0CEB2AAEDCF90060DD8C /* BookingConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9A0CEA2AAEDCF90060DD8C /* BookingConfirmationView.swift */; };
 		2EFAB14F2A8E2C5100113733 /* QanGinCustomerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFAB14E2A8E2C5100113733 /* QanGinCustomerApp.swift */; };
 		2EFAB1532A8E2C5400113733 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2EFAB1522A8E2C5400113733 /* Assets.xcassets */; };
 		2EFAB1562A8E2C5400113733 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2EFAB1552A8E2C5400113733 /* Preview Assets.xcassets */; };
@@ -34,6 +35,7 @@
 		2E9A0CE42AAC804D0060DD8C /* FlightSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSelectionView.swift; sourceTree = "<group>"; };
 		2E9A0CE62AAD97080060DD8C /* PassengersInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassengersInfoView.swift; sourceTree = "<group>"; };
 		2E9A0CE82AADE7140060DD8C /* ServicesSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesSelectionView.swift; sourceTree = "<group>"; };
+		2E9A0CEA2AAEDCF90060DD8C /* BookingConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingConfirmationView.swift; sourceTree = "<group>"; };
 		2EFAB14B2A8E2C5100113733 /* QanGinCustomer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QanGinCustomer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EFAB14E2A8E2C5100113733 /* QanGinCustomerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QanGinCustomerApp.swift; sourceTree = "<group>"; };
 		2EFAB1522A8E2C5400113733 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				2EFAB17D2A8EE06100113733 /* SeatSelectionView.swift */,
 				2E9A0CE82AADE7140060DD8C /* ServicesSelectionView.swift */,
 				2E9A0CE62AAD97080060DD8C /* PassengersInfoView.swift */,
+				2E9A0CEA2AAEDCF90060DD8C /* BookingConfirmationView.swift */,
 			);
 			path = Book;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				2E9A0CE72AAD97080060DD8C /* PassengersInfoView.swift in Sources */,
 				2EFAB1702A8E3C6B00113733 /* AlertItemView.swift in Sources */,
 				2EFAB1692A8E37D400113733 /* AlertsView.swift in Sources */,
+				2E9A0CEB2AAEDCF90060DD8C /* BookingConfirmationView.swift in Sources */,
 				2EFAB15D2A8E2C7200113733 /* WelcomeView.swift in Sources */,
 				2EFAB14F2A8E2C5100113733 /* QanGinCustomerApp.swift in Sources */,
 				2E9A0CE92AADE7140060DD8C /* ServicesSelectionView.swift in Sources */,

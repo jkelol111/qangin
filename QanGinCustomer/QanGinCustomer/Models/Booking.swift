@@ -14,16 +14,16 @@ final class Booking: Identifiable {
             }
         }
         
-        enum Services: Codable {
-            case food
-            case drink
-            case dutyFree
+        enum Services: String, Codable {
+            case food = "Food"
+            case drinks = "Drinks"
+            case dutyFree = "Duty-free"
             
             var icon: String {
                 switch self {
                 case .food:
                     "fork.knife"
-                case .drink:
+                case .drinks:
                     "wineglass"
                 case .dutyFree:
                     "handbag"
@@ -34,7 +34,7 @@ final class Booking: Identifiable {
                 switch self {
                 case .food:
                     27.99
-                case .drink:
+                case .drinks:
                     9.99
                 case .dutyFree:
                     199.99
@@ -55,6 +55,11 @@ final class Booking: Identifiable {
             self.services = services
         }
     }
+    
+    struct Flight: Codable, Identifiable {
+        let id: String
+        let flyingOn: Date
+    }
 
     @Attribute(.unique)
     var id: String
@@ -62,25 +67,53 @@ final class Booking: Identifiable {
     
     var from: Destinations
     var to: Destinations
-    var flyingOn: Date
-    var aircraft: String?
+    
+    @Attribute(.ephemeral)
+    var flyingOn = Date.now
+    var forwardFlight: Flight?
+    @Attribute(.ephemeral)
+    var isReturn = true
+    @Attribute(.ephemeral)
+    var returningOn = Date.now + 86400
+    var returnFlight: Flight?
     
     var adults: [Passenger]
     var children: [Passenger]
     
-    @Transient
-    var isReturn = true
-    @Transient
-    var returnOn: Date = .now + 86400
+    @Attribute(.ephemeral)
+    var isBooked = true
     
-    init(id: String, to: Destinations, flyingOn: Date, aircraft: String? = nil, adults: [Passenger] = [], children: [Passenger] = []) {
+    init(id: String, to: Destinations, flyingOn: Date, forwardFlight: Flight? = nil, returnFlight: Flight? = nil, adults: [Passenger] = [], children: [Passenger] = [], isBooked: Bool = true) {
         self.id = id
         self.bookedOn = .now
         self.from = .sydney
         self.to = to
         self.flyingOn = flyingOn
-        self.aircraft = aircraft
+        self.forwardFlight = forwardFlight
+        self.returnFlight = returnFlight
         self.adults = adults
         self.children = children
+        self.isBooked = isBooked
+    }
+    
+    func totalPassengers() -> Int {
+        return adults.count + children.count
+    }
+    
+    func subtotal() -> Double {
+        var t = 0.0
+        for adult in adults {
+            t += adult.seat?.price ?? 0.0
+            for service in adult.services.keys {
+                t += service.price * Double(adult.services[service]!)
+            }
+        }
+        for child in children {
+            t += child.seat?.price ?? 0.0
+            for service in child.services.keys {
+                t += service.price * Double(child.services[service]!)
+            }
+        }
+        return t
     }
 }

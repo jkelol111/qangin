@@ -1,43 +1,30 @@
 import SwiftUI
 
 struct BookView: View {
-    enum BookPaths: Hashable {
-        case fromPicker
-        case toPicker
-        case flightSelection
+    enum Paths: Hashable {
+        case destinationPicker(CityPicker.Direction)
+        case flightSelection(FlightSelectionView.Direction)
         case passengers
         case confirm
     }
     
+    @Binding var selectedTab: RootTabView.Tabs
+    
     @State private var booking = Booking(
         id: "ABC123",
         to: .melbourne,
-        flyingOn: .now + 86400
+        flyingOn: .now + 86400,
+        isBooked: false
     )
     @State private var adultsCount = 0
     @State private var childrenCount = 0
-    @State private var path: [BookPaths] = []
-    
-    @ViewBuilder
-    private func pickerItem(_ destination: Destinations) -> some View {
-        Text(destination.rawValue)
-            .font(.title.weight(.semibold))
-            .padding()
-            .listRowBackground(Image("Destination/\(destination.rawValue)")
-                .resizable()
-                .scaledToFill())
-            .background {
-                Image("Destination/\(destination.rawValue)")
-                    .resizable()
-                    .scaledToFill()
-            }
-    }
+    @State private var path: [Paths] = []
     
     var body: some View {
         NavigationStack(path: $path) {
             Form {
                 Section {
-                    NavigationLink(value: BookPaths.fromPicker) {
+                    NavigationLink(value: Paths.destinationPicker(.from)) {
                         VStack(alignment: .leading) {
                             Text("From")
                                 .fontWeight(.semibold)
@@ -52,7 +39,7 @@ struct BookView: View {
                             .resizable()
                             .scaledToFill()
                     )
-                    NavigationLink(value: BookPaths.toPicker) {
+                    NavigationLink(value: Paths.destinationPicker(.to)) {
                         VStack(alignment: .leading) {
                             Text("To")
                                 .fontWeight(.semibold)
@@ -69,28 +56,16 @@ struct BookView: View {
                     )
                 }
                 Section("Dates") {
-                    HStack {
-                        VStack(spacing: 8) {
-                            Image(systemName: "airplane.departure")
-                            DatePicker("Depart", selection: $booking.flyingOn, displayedComponents: .date)
-                                .labelsHidden()
-                        }
-                        Divider()
-                        VStack(spacing: 12) {
-                            Image(systemName: "arrowshape.left.arrowshape.right.fill")
-                            Toggle("Book return", isOn: $booking.isReturn)
-                                .labelsHidden()
-                        }
-                        if booking.isReturn {
-                            Divider()
-                            VStack(spacing: 8) {
-                                Image(systemName: "airplane.arrival")
-                                DatePicker("Return", selection: $booking.returnOn, displayedComponents: .date)
-                                    .labelsHidden()
+                    DatePicker("Depart on", selection: $booking.flyingOn, displayedComponents: .date)
+                    Toggle("Return?", isOn: $booking.isReturn.animation())
+                        .onChange(of: booking.isReturn) { _, isReturn in
+                            if !isReturn {
+                                booking.returnFlight = nil
                             }
                         }
+                    if booking.isReturn {
+                        DatePicker("Return", selection: $booking.returningOn, displayedComponents: .date)
                     }
-                    
                 }
                 
                 Section("Passengers") {
@@ -101,7 +76,7 @@ struct BookView: View {
                         adultsCount += 1
                     } onDecrement: {
                         if adultsCount > 0 {
-                            booking.adults.removeLast()
+                            booking.adults.popLast()
                             adultsCount -= 1
                         }
                     }
@@ -113,14 +88,14 @@ struct BookView: View {
                         childrenCount += 1
                     } onDecrement: {
                         if childrenCount > 0 {
-                            booking.children.removeLast()
+                            booking.children.popLast()
                             childrenCount -= 1
                         }
                     }
                 }
                 
                 Button("Search flights") {
-                    path.append(.flightSelection)
+                    path.append(.flightSelection(.forward))
                 }
                 .buttonStyle(BigFriendlyButtonStyle())
                 .listRowInsets(.none)
@@ -129,19 +104,25 @@ struct BookView: View {
                 .disabled(adultsCount == 0 && childrenCount == 0)
             }
             .navigationTitle("Book")
-            .navigationDestination(for: BookPaths.self) { path in
+            .navigationDestination(for: Paths.self) { path in
                 switch path {
-                case .fromPicker:
-                    CityPicker(direction: .from, city: $booking.from)
-                case .toPicker:
-                    CityPicker(direction: .to, city: $booking.to)
-                case .flightSelection:
-                    FlightSelectionView(booking: booking, path: $path)
+                case .destinationPicker(let direction):
+                    CityPicker(direction: direction, booking: booking)
+                case .flightSelection(let direction):
+                    FlightSelectionView(direction: direction, booking: booking, path: $path)
                 case .passengers:
                     PassengersInfoView(booking: booking, path: $path)
-                default:
-                    Text("To be implemented")
+                case .confirm:
+                    BookingConfirmationView(booking: booking, path: $path, selectedTab: $selectedTab)
                 }
+            }
+            .onAppear {
+                booking = Booking(
+                    id: "ABC123",
+                    to: .melbourne,
+                    flyingOn: .now + 86400,
+                    isBooked: false
+                )
             }
         }
     }
